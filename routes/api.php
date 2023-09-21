@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CommentsController;
+use App\Http\Controllers\Api\TaskCommentsController;
 use App\Http\Controllers\Api\TasksController;
 use App\Http\Controllers\Api\UserTasksController;
 use Illuminate\Http\Request;
@@ -29,4 +30,9 @@ Route::middleware('auth:sanctum')
         Route::get('/users/{user}/tasks', [UserTasksController::class, 'index',])->name('users.tasks.index');
         Route::post('/users/{user}/tasks/{task}', [UserTasksController::class, 'store',])->name('users.tasks.store');
         Route::delete('/users/{user}/tasks/{task}', [UserTasksController::class, 'destroy',])->name('users.tasks.destroy');
+
+        // Task's Comments
+        // Task Comments
+        Route::get('/tasks/{task}/comments', [TaskCommentsController::class, 'index',])->name('tasks.comments.index');
+        Route::post('/tasks/{task}/comments', [TaskCommentsController::class, 'store',])->name('tasks.comments.store');
     });
