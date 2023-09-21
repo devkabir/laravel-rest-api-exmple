@@ -14,7 +14,7 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name', 'description',
+        'name', 'description','creator_id'
     ];
 
     public function creator(): BelongsTo
