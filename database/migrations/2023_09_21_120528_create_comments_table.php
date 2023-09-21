@@ -13,6 +13,7 @@ return new class extends Migration {
 			$table->foreignIdFor(\App\Models\Task::class);
             $table->text('comment');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

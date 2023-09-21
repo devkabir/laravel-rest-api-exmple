@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CommentsController;
 use App\Http\Controllers\Api\TasksController;
 use App\Http\Controllers\Api\UserTasksController;
 use Illuminate\Http\Request;
@@ -19,8 +20,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::get('user', fn(Request $request) => $request->user())->name('user');
-        // User's Created Tasks
+        // User's  Created Tasks
         Route::apiResource('tasks', TasksController::class);
+        // User's Comments
+        Route::apiResource('comments', CommentsController::class);
 
         // User's Assigned Tasks
         Route::get('/users/{user}/tasks', [UserTasksController::class, 'index',])->name('users.tasks.index');
