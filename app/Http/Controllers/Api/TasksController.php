@@ -19,6 +19,7 @@ class TasksController extends Controller
         return new TaskCollection($tasks);
 
     }
+
     public function store(TaskRequest $request)
     {
         $validated = $request->validated();
