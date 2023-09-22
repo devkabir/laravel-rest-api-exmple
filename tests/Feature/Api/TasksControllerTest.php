@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api;
+namespace Api;
 
 use App\Models\Task;
 use App\Models\User;
@@ -18,9 +18,7 @@ class TasksControllerTest extends TestCase
      */
     public function it_gets_tasks_list(): void
     {
-        Task::factory(20)->create([
-           'creator_id' => auth()->user()->id,
-        ]);
+        Task::factory(20)->create();
         $response = $this->getJson(route('tasks.index'));
 
 

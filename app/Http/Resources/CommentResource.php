@@ -24,6 +24,7 @@ class CommentResource extends JsonResource
             'task_id' => $this->task_id,
 
             'task' => new TaskResource($this->whenLoaded('task')),
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

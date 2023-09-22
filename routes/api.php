@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')
+Route::middleware(['auth:sanctum', 'verified'])
     ->group(function () {
         Route::get('user', fn(Request $request) => $request->user())->name('user');
         // User's  Created Tasks
@@ -35,4 +35,5 @@ Route::middleware('auth:sanctum')
         // Task Comments
         Route::get('/tasks/{task}/comments', [TaskCommentsController::class, 'index',])->name('tasks.comments.index');
         Route::post('/tasks/{task}/comments', [TaskCommentsController::class, 'store',])->name('tasks.comments.store');
+
     });

@@ -13,9 +13,8 @@ class TasksController extends Controller
     public function index()
     {
         // Retrieve tasks created by or assigned to the authenticated user
-        $tasks = Task::whereCreatorId(auth()->user()->id)
-                        ->latest()
-                        ->paginate();
+        $tasks = Task::latest()->with('creator')
+            ->paginate();
         return new TaskCollection($tasks);
 
     }
@@ -31,7 +30,7 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        return new TaskResource($task);
+        return new TaskResource(Task::with(['comments', 'creator', 'users'])->find($task->id));
     }
 
     public function update(TaskRequest $request, Task $task)

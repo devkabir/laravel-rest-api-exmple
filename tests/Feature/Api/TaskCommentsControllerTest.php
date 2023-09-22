@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Api;
 
 use App\Models\Comment;
 use App\Models\Task;

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskCollection;
+use App\Mail\TaskAssignedMail;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 
 class UserTasksController extends Controller
 {
@@ -23,7 +26,7 @@ class UserTasksController extends Controller
     public function store(User $user, Task $task): Response
     {
         $user->tasks()->syncWithoutDetaching([$task->id]);
-
+        $user->notify(new TaskAssignedNotification($task));
         return response()->noContent();
     }
 

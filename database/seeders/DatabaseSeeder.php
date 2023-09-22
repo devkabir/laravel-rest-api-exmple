@@ -6,8 +6,6 @@ namespace Database\Seeders;
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
-use Database\Factories\CommentFactory;
-use Database\Factories\TaskFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,15 +15,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create()
-            ->each(function (User $user) {
-                Task::factory(2)->create()->each(function (Task $task) use ($user) {
-                    $user->tasks()->sync([$task->id]);
-                    $task->comments()->createMany(Comment::factory(10)->make()->toArray());
-                });
-
+        $user = User::factory()->create();
+        $tasks = Task::factory(10)->make(['creator_id' => $user->id])->toArray();
+        $user->created_tasks()->createMany($tasks);
+        $user->created_tasks->each(function (Task $task){
+            $users = User::factory(10)->create();
+            $task->users()->syncWithoutDetaching($users->pluck('id'));
+            $users->each(function (User $user) use ($task) {
+                $comments = Comment::factory(10)->make(['user_id' => $user->id]);
+                $task->comments()->saveMany($comments);
             });
-
-
-}
+        });
+    }
 }

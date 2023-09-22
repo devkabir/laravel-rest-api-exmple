@@ -1,12 +1,14 @@
 <?php
 
-namespace Tests\Feature;
+namespace Api;
 
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\NewCommentAddedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -45,15 +47,30 @@ class CommentsControllerTest extends TestCase
      */
     public function it_stores_the_comment(): void
     {
-        $data = Comment::factory()
-            ->make()
-            ->toArray();
+        Notification::fake();
 
-        $response = $this->postJson(route('comments.store'), $data);
+        $task = Task::factory()->create();
+        User::factory()->count(2)->create()
+            ->each(function (User $user) use ($task) {
+                $user->tasks()->syncWithoutDetaching($task->id);
+            });
 
-        $this->assertDatabaseHas('comments', $data);
+        $comment = Comment::factory()->make(['task_id' => $task->id])->toArray();
 
-        $response->assertStatus(201)->assertJsonFragment($data);
+
+        $response = $this->postJson(route('comments.store'), $comment);
+
+        Notification::assertSentTo(
+            [$task->creator, $task->users],
+            NewCommentAddedNotification::class,
+            function ($notification, $channels){
+                return $notification->comment->id === 1;
+            }
+        );
+
+        $this->assertDatabaseHas('comments', $comment);
+
+        $response->assertStatus(201)->assertJsonFragment($comment);
     }
 
     /**

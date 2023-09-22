@@ -7,6 +7,7 @@ use App\Http\Requests\CommentRequest;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
+use App\Notifications\NewCommentAddedNotification;
 use Illuminate\Http\Request;
 
 class CommentsController extends Controller
@@ -25,6 +26,11 @@ class CommentsController extends Controller
 
         $comment = Comment::create($validated);
 
+        $users = $comment->task->users()->get();
+        $comment->task->creator->notify(new NewCommentAddedNotification($comment));
+        foreach ($users as $user) {
+            $user->notify(new NewCommentAddedNotification($comment));
+        }
         return new CommentResource($comment);
     }
 

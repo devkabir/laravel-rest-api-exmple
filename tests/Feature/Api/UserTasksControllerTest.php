@@ -1,28 +1,19 @@
 <?php
 
-namespace Tests\Feature\Api;
+namespace Api;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserTasksControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
-
-    protected function setUp():void
-    {
-        parent::setUp();
-
-        $user = User::factory()->create(['email' => 'admin@admin.com']);
-
-        Sanctum::actingAs($user, [], 'web');
-
-        $this->withoutExceptionHandling();
-    }
 
     /**
      * @test
@@ -44,12 +35,23 @@ class UserTasksControllerTest extends TestCase
      */
     public function it_can_attach_tasks_to_user(): void
     {
+        Notification::fake();
+
+
         $user = User::factory()->create();
         $task = Task::factory()->create();
 
         $response = $this->postJson(
             route('users.tasks.store', [$user, $task])
         );
+        Notification::assertSentTo(
+            $user,
+            TaskAssignedNotification::class,
+            function ($notification, $channels) use ($task) {
+                return $notification->task->id === $task->id;
+            }
+        );
+
 
         $response->assertNoContent();
 
@@ -81,6 +83,17 @@ class UserTasksControllerTest extends TestCase
                 ->where('tasks.id', $task->id)
                 ->exists()
         );
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $user = User::factory()->create(['email' => 'admin@admin.com']);
+
+        Sanctum::actingAs($user, [], 'web');
+
+        $this->withoutExceptionHandling();
     }
 
 }
