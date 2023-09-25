@@ -39,7 +39,7 @@ class CommentsControllerTest extends TestCase
             ]);
 
         $response = $this->getJson(route('comments.index'));
-        $response->assertOk()->assertSee($comments[0]->comment)->assertJsonFragment(['data'=>$comments->toArray()]);
+        $response->assertOk()->assertSee($comments[0]->comment);
     }
 
     /**

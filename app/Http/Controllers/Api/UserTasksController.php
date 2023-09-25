@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskCollection;
-use App\Mail\TaskAssignedMail;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskAssignedNotification;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Mail;
 
 class UserTasksController extends Controller
 {

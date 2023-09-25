@@ -31,8 +31,8 @@ class TaskCommentsController extends Controller
         ]);
 
         $comment = $task->comments()->create($validated);
-        $users = $comment->task->users()->get();
         $comment->task->creator->notify(new NewCommentAddedNotification($comment));
+        $users = $comment->task->users()->get();
         foreach ($users as $user) {
             $user->notify(new NewCommentAddedNotification($comment));
         }

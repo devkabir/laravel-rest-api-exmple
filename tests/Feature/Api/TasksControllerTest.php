@@ -44,13 +44,13 @@ class TasksControllerTest extends TestCase
      */
     public function it_stores_the_task(): void
     {
+        User::factory()->count(5)->create();
         $data = Task::factory()
             ->make([
                 'creator_id' => auth()->user()->id,
             ])
             ->toArray();
-        $response = $this->postJson(route('tasks.store'), $data);
-
+        $response = $this->postJson(route('tasks.store'), array_merge($data, array('selectedUsers' => User::pluck('id'))));
         $this->assertDatabaseHas('tasks', $data);
 
         $response->assertStatus(201)->assertJsonFragment($data);
@@ -71,7 +71,7 @@ class TasksControllerTest extends TestCase
             'creator_id' => $user->id,
         ];
 
-        $response = $this->putJson(route('tasks.update', $task), $data);
+        $response = $this->putJson(route('tasks.update', $task), array_merge($data, array('selectedUsers' => User::pluck('id'))));
 
         $data['id'] = $task->id;
 
