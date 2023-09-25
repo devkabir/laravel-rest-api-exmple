@@ -29,7 +29,7 @@ class NewCommentAddedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->line('A new comment was added to task: '.$this->comment->task->title)
-            ->action('View Task', url('/tasks/'.$this->comment->task->id))
+            ->action('View Task', config('app.frontend_url') . '/tasks/details/'. $this->comment->task->id)
             ->line('Thank you for using our application!');
 
     }

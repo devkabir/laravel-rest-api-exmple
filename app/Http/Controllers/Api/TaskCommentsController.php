@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Models\Task;
+use App\Notifications\NewCommentAddedNotification;
 use Illuminate\Http\Request;
 
 class TaskCommentsController extends Controller
@@ -20,6 +21,8 @@ class TaskCommentsController extends Controller
         return new CommentCollection($comments);
     }
 
+
+
     public function store(Request $request, Task $task)
     {
         $validated = $request->validate([
@@ -28,7 +31,11 @@ class TaskCommentsController extends Controller
         ]);
 
         $comment = $task->comments()->create($validated);
-
+        $users = $comment->task->users()->get();
+        $comment->task->creator->notify(new NewCommentAddedNotification($comment));
+        foreach ($users as $user) {
+            $user->notify(new NewCommentAddedNotification($comment));
+        }
         return new CommentResource($comment);
     }
 

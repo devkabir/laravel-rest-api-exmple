@@ -28,7 +28,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->line('A new task has been assigned to you: ' . $this->task->name)
-            ->action('View Task', route('tasks.show', $this->task))
+            ->action('View Task', config('app.frontend_url') . '/tasks/details/'. $this->task->id)
             ->line('Thank you for using our application!');
     }
 

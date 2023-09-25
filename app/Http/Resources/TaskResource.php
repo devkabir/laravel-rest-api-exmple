@@ -18,16 +18,18 @@ class TaskResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at->diffForHumans(),
+            'deleted_at' => $this->deleted_at?->diffForHumans(),
             'comments_count' => $this->comments_count,
             'users_count' => $this->users_count,
-
             'creator_id' => $this->creator_id,
 
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'users' => UserCollection::collection($this->whenLoaded('users')),
-            'comments' => CommentCollection::collection($this->whenLoaded('comments')),
+            'creator' => $this->whenLoaded('creator'),
+            'users' => $this->whenLoaded('users'),
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
+
+
 }

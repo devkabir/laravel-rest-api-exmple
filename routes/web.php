@@ -17,4 +17,11 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+
+
 require __DIR__.'/auth.php';
+
+
+Route::fallback(function(){
+    return response()->json(['message' => 'Not Found'], 404);
+});
